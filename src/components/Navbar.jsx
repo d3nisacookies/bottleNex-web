@@ -5,7 +5,6 @@ import '../css/Navbar.css';
 const Navbar = () => {
   const handleTestNavigation = (pageName) => {
     console.log(`Navigating to ${pageName}`);
-    alert(`This would navigate to ${pageName} in a real app`);
   };
 
   return (
@@ -63,7 +62,7 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Review App Button (Right-aligned) */}
+        {/* Review App Button (Right-aligned)
         <button 
           className="review-btn"
           onClick={() => {
@@ -72,7 +71,7 @@ const Navbar = () => {
           }}
         >
           Review App
-        </button>
+        </button> */}
       </div>
     </nav>
   );
