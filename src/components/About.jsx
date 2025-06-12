@@ -1,7 +1,7 @@
 import "../css/About.css"
 
 export default function About(){
-    const names = ['Prabu', 'P', 'R', 'A', 'B'];
+    const names = ['Ming Han', 'Varsha', 'Aung Kaung', 'Brannon', 'Prabu'];
   
     return (
       <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
