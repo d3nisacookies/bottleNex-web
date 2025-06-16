@@ -55,3 +55,35 @@
   text-align: left;
   margin-bottom: 20px;
 }
+
+/* Add to your Plans.css */
+.subscribe-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.free-plan-button {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.premium-plan-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.subscribe-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.premium-plan-button:hover {
+  background-color: #3d8b40;
+}

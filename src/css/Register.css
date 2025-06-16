@@ -1,0 +1,271 @@
+/* Main Container */
+.register-container {
+  padding-top: 80px; /* Add space below navbar */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Card Styling */
+.register-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn 0.6s ease-out;
+  margin-top: 60px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.register-card h2 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  position: relative;
+}
+
+.register-card h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: #3498db;
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e6ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f8fafc;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  background-color: white;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+}
+
+.form-group input.error {
+  border-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+/* Error Messages */
+.error-message {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: block;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.25);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Login Link */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.login-link a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.login-link a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+/* Date Input Customization */
+input[type="date"] {
+  position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .register-container {
+    padding: 1rem;
+  }
+  
+  .register-card {
+    padding: 1.5rem;
+  }
+  
+  .register-card h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Password Strength Indicator (Bonus) */
+.password-strength {
+  height: 4px;
+  background: #eee;
+  margin-top: 0.5rem;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.password-strength::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #e74c3c;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.password-strength.weak::after {
+  width: 30%;
+  background: #e74c3c;
+}
+
+.password-strength.medium::after {
+  width: 60%;
+  background: #f39c12;
+}
+
+.password-strength.strong::after {
+  width: 100%;
+  background: #27ae60;
+}
+
+.form-error {
+  color: #dc3545;
+  background: #f8d7da;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.password-strength {
+  margin-bottom: 15px;
+}
+
+.strength-meter {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.strength-bar {
+  height: 5px;
+  border-radius: 2px;
+  margin-right: 10px;
+  transition: width 0.3s ease;
+}
+
+.strength-meter.weak .strength-bar {
+  width: 30%;
+  background: #dc3545;
+}
+
+.strength-meter.medium .strength-bar {
+  width: 60%;
+  background: #fd7e14;
+}
+
+.strength-meter.strong .strength-bar {
+  width: 100%;
+  background: #28a745;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

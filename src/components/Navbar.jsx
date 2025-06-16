@@ -1,29 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import Bottlenex from "../images/Bottlenex.png";
 import '../css/Navbar.css';
 
 const Navbar = () => {
+  const { currentUser, logout } = useAuth();
+
   const handleTestNavigation = (pageName) => {
     console.log(`Navigating to ${pageName}`);
   };
 
   return (
     <nav className="navbar">
+      {/* Welcome banner for logged-in users */}
+      {currentUser && (
+        <div className="welcome-banner">
+          Welcome, {currentUser.firstName || currentUser.email.split('@')[0]}!
+        </div>
+      )}
+      
       <div className="navbar-container">
-        {/* App Icon (Left-aligned) */}
-        <Link 
-          to="/" 
-          className="navbar-logo"
-          onClick={() => handleTestNavigation('Home')}
-        >
-          <img 
-            src="https://via.placeholder.com/40x40?text=Logo" 
-            alt="App Logo" 
-          />
-        </Link>
-
-        {/* Navigation Links (Center-aligned) */}
-        <ul className="nav-menu">
+        {/* Left-side Navigation Links */}
+        <ul className="nav-menu nav-menu-left">
           <li className="nav-item">
             <Link 
               to="/" 
@@ -44,6 +43,30 @@ const Navbar = () => {
           </li>
           <li className="nav-item">
             <Link 
+              to="/review" 
+              className="nav-links"
+              onClick={() => handleTestNavigation('Review')}
+            >
+              Review
+            </Link>
+          </li>
+        </ul>
+
+        {/* Centered Logo */}
+        <div className="navbar-logo-container">
+          <Link 
+            to="/" 
+            className="navbar-logo"
+            onClick={() => handleTestNavigation('Home')}
+          >
+            <img src={Bottlenex} alt="App Logo" />
+          </Link>
+        </div>
+
+        {/* Right-side Navigation Links */}
+        <ul className="nav-menu nav-menu-right">
+          <li className="nav-item">
+            <Link 
               to="/faq" 
               className="nav-links"
               onClick={() => handleTestNavigation('FAQ')}
@@ -60,18 +83,25 @@ const Navbar = () => {
               About Us
             </Link>
           </li>
+          <li className="nav-item">
+            {currentUser ? (
+              <button 
+                onClick={logout} 
+                className="nav-links logout-btn"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link 
+                to="/register" 
+                className="nav-links register-btn"
+                onClick={() => handleTestNavigation('Register')}
+              >
+                Register and download
+              </Link>
+            )}
+          </li>
         </ul>
-
-        {/* Review App Button (Right-aligned)
-        <button 
-          className="review-btn"
-          onClick={() => {
-            handleTestNavigation('Home (via Review)');
-            window.location.href = '/'; // Simulate redirect
-          }}
-        >
-          Review App
-        </button> */}
       </div>
     </nav>
   );

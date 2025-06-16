@@ -1,7 +1,7 @@
 import React from "react";
-import "./Review.css";
-import logo from "./bottlenex-logo.png"; // Place your logo in the project and update the path
-import reviewerImg from "./reviewer1.jpg"; // Use the same image for demo or different ones
+import "../css/Review.css";
+// import logo from "./bottlenex-logo.png"; // Place your logo in the project and update the path
+// import reviewerImg from "./reviewer1.jpg"; // Use the same image for demo or different ones
 
 const reviews = [
   {
@@ -10,7 +10,7 @@ const reviews = [
     reviewer: "Evan Rachel",
     date: "June 10, 2025",
     rating: 3,
-    img: reviewerImg,
+    // img: reviewerImg,
   },
   {
     category: "Route Optimization",
@@ -18,7 +18,7 @@ const reviews = [
     reviewer: "Louis Hoffman",
     date: "June 11, 2025",
     rating: 4,
-    img: reviewerImg,
+    // img: reviewerImg,
   },
   {
     category: "Real-Time Traffic Updates",
@@ -26,29 +26,29 @@ const reviews = [
     reviewer: "Thoma Middleditch",
     date: "June 12, 2025",
     rating: 4,
-    img: reviewerImg,
+    // img: reviewerImg,
   },
 ];
 
 export default function Review() {
   return (
-    <div className="main-bg">
-      <nav className="navbar">
-        <div className="nav-links">
-          <a href="#">Home</a>
-          <a href="#">Subscription Plan</a>
-          <a href="#">Review</a>
-        </div>
-        <div className="nav-logo">
-          <img src={logo} alt="BottleneX Logo" />
-        </div>
-        <div className="nav-links nav-links-right">
-          <a href="#">FAQ</a>
-          <a href="#">About Us</a>
-          <button className="download-btn">Download</button>
-          <button className="login-btn">Login</button>
-        </div>
-      </nav>
+    // <div className="main-bg">
+    //   <nav className="navbar">
+    //     <div className="nav-links">
+    //       <a href="#">Home</a>
+    //       <a href="#">Subscription Plan</a>
+    //       <a href="#">Review</a>
+    //     </div>
+    //     {/* <div className="nav-logo">
+    //       <img src={logo} alt="BottleneX Logo" />
+    //     </div> */}
+    //     <div className="nav-links nav-links-right">
+    //       <a href="#">FAQ</a>
+    //       <a href="#">About Us</a>
+    //       <button className="download-btn">Download</button>
+    //       <button className="login-btn">Login</button>
+    //     </div>
+    //   </nav>
       <div className="review-container">
         <h1>Rating and Reviews</h1>
         <div className="review-grid">
@@ -74,6 +74,6 @@ export default function Review() {
           ))}
         </div>
       </div>
-    </div>
+    // </div>
   );
 }

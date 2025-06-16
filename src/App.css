@@ -36,3 +36,40 @@
     transform: rotate(360deg);
   }
 }
+
+/* Global Layout Styles */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-top: 80px; /* Navbar height */
+  padding: 2rem;
+}
+
+/* Global layout styles */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  width: 100%;
+  background: #ffffff; /* Your navbar color */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  /* Add your existing navbar styles */
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  width: 100%;
+}
