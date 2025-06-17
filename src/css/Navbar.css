@@ -1,95 +1,117 @@
+/* Navbar container */
 .navbar {
   background-color: #ffffff;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1rem;
-  position: flex;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding-top: 80px;
-  width: 100%;
-  padding: 1rem 0;
+}
+
+/* Welcome banner */
+.welcome-banner {
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 80px;
-  width: 100%;
+  padding: 1rem;
   max-width: 1200px;
-  padding: 0 2rem;
-  max-width: 1200px;
-  margin: 0px;
-
+  margin: 0 auto;
+  flex-wrap: wrap;
+  height: fit-content;
 }
 
+/* Logo styles */
+.navbar-logo-container {
+  position: relative;
+  left: auto;
+  transform: none;
+  margin-right: auto;
+}
+
+.navbar-logo img {
+  height: 40px;
+  width: auto;
+}
+
+/* Navigation menus */
 .nav-menu {
   display: flex;
-  align-items: center;
   list-style: none;
-  text-align: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-menu-left {
-  margin-right: auto; /* Pushes logo to center */
+.nav-menu-left,.nav-menu-right {
+  flex-grow: 1;
 }
 
-.nav-menu-right {
-  margin-left: auto; /* Pushes logo to center */
-}
 
+/* Navigation items */
 .nav-item {
-  height: 80px;
   display: flex;
   align-items: center;
+  padding: 1rem;
 }
 
 .nav-links {
   color: #333;
-  display: flex;
-  align-items: center;
   text-decoration: none;
-  padding: 0 1rem;
-  height: 100%;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+  padding: 0.5rem 0;
+  position: relative;
 }
 
 .nav-links:hover {
-  color: #007bff;
+  color: #4CAF50;
 }
 
-.navbar-logo-container {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.navbar-logo {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.navbar-logo img {
-  width: 40px;
-  height: 40px;
-}
-
+/* Register button */
 .register-btn {
-  background-color: #007bff;
+  background-color: #4CAF50;
   color: white !important;
-  padding: 4px 8px;
+  padding: 0.4rem 1rem;
   border-radius: 4px;
-  margin-left: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .register-btn:hover {
-  background-color: #0056b3;
+  background-color: #3e8e41;
   color: white;
-  text-decoration: none;
+}
+
+/* Logout button */
+.logout-btn {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  padding: 0.5rem 0;
+}
+
+.logout-btn:hover {
+  color: #f44336;
+}
+
+/* Active link indicator */
+.nav-links.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #4CAF50;
 }
