@@ -40,7 +40,8 @@ export function AuthProvider({ children }) {
                 ...user,
                 isVerified: user.emailVerified,
                 firstName: docSnap.data()?.firstName,
-                lastName: docSnap.data()?.lastName
+                lastName: docSnap.data()?.lastName,
+                role: docSnap.data()?.role
               });
             });
           } else {
@@ -79,7 +80,8 @@ export function AuthProvider({ children }) {
         email: email,
         emailVerified: false,
         createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp()
+        lastLogin: serverTimestamp(),
+        role: userData.role || "user"
       });
 
       await sendEmailVerification(userCredential.user);
@@ -98,12 +100,24 @@ export function AuthProvider({ children }) {
       setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
+      // Get user data from Firestore to check role
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      
       // Update last login timestamp
       await setDoc(doc(db, "users", userCredential.user.uid), {
         lastLogin: serverTimestamp()
       }, { merge: true });
       
-      return userCredential;
+      // Return user data including role
+      return {
+        ...userCredential,
+        userData: {
+          ...userData,
+          role: userData?.role || "user"
+        }
+      };
     } catch (error) {
       console.error("Login error:", error);
       throw error;

@@ -24,12 +24,22 @@ function Login() {
       setLoading(true);
       
       // Attempt login
-      await login(formData.email, formData.password);
+      const loginResult = await login(formData.email, formData.password);
+      
+      // Check if user is admin and redirect accordingly
+      const isAdmin = loginResult.userData?.role === "admin";
       
       // Success case
       console.log('✅ Login successful for user:', formData.email);
-      console.log('🔄 Redirecting to:', location.state?.from || '/home');
-      navigate(location.state?.from || '/');
+      console.log('👤 User role:', loginResult.userData?.role);
+      
+      if (isAdmin) {
+        console.log('🔄 Redirecting admin to /admin');
+        navigate('/admin');
+      } else {
+        console.log('🔄 Redirecting user to:', location.state?.from || '/');
+        navigate(location.state?.from || '/');
+      }
       
     } catch (err) {
       console.error('❌ Login error:', err);

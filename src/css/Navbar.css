@@ -115,3 +115,13 @@
   height: 2px;
   background-color: #4CAF50;
 }
+
+.nav-links.download.btn{
+  .register-btn {
+  background-color: #4CAF50;
+  color: white !important;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+}

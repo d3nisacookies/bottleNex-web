@@ -11,6 +11,11 @@ const Navbar = () => {
     console.log(`Navigating to ${pageName}`);
   };
 
+  const handleDownload = () => {
+    console.log('Download initiated');
+    // Add your download logic here, e.g., redirect to download link or trigger file download
+  };
+
   return (
     <nav className="navbar">
       {/* Welcome banner for logged-in users */}
@@ -50,6 +55,17 @@ const Navbar = () => {
               Review
             </Link>
           </li>
+          {currentUser && currentUser.role === "admin" && (
+            <li className="nav-item">
+              <Link 
+                to="/admin" 
+                className="nav-links"
+                onClick={() => handleTestNavigation('Admin Dashboard')}
+              >
+                Admin Dashboard
+              </Link>
+            </li>
+          )}
         </ul>
 
         {/* Centered Logo */}
@@ -85,12 +101,20 @@ const Navbar = () => {
           </li>
           <li className="nav-item">
             {currentUser ? (
-              <button 
-                onClick={logout} 
-                className="nav-links logout-btn"
-              >
-                Logout
-              </button>
+              <>
+                <button 
+                  onClick={handleDownload} 
+                  className="nav-links download-btn"
+                >
+                  Download
+                </button>
+                <button 
+                  onClick={logout} 
+                  className="nav-links logout-btn"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <Link 
                 to="/register" 

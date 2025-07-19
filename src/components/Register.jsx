@@ -5,7 +5,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import "../css/Register.css";
 
-export default function Register() {
+export default function Register({ role = "user" }) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -91,7 +91,8 @@ export default function Register() {
         signUpDate: serverTimestamp(),
         status: true,
         userType: "Free",
-        lastLogin: serverTimestamp()
+        lastLogin: serverTimestamp(),
+        role // Use the prop value
       };
 
       // Save to Firestore
@@ -268,4 +269,28 @@ export default function Register() {
       </div>
     </div>
   );
+}
+
+// Helper function to create an admin user (call from console or test button)
+export async function createAdminUser({ email, password, firstName, lastName }) {
+  const { createUserWithEmailAndPassword } = await import("firebase/auth");
+  const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
+  const { auth, db } = await import("../firebase");
+
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  await setDoc(doc(db, "users", userCredential.user.uid), {
+    firstName,
+    lastName,
+    email,
+    signUpDate: serverTimestamp(),
+    status: true,
+    userType: "Admin",
+    lastLogin: serverTimestamp(),
+    role: "admin"
+  });
+  return userCredential;
+}
+
+if (typeof window !== "undefined") {
+  window.createAdminUser = createAdminUser;
 }
