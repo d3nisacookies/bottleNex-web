@@ -2,17 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLandingPage } from "../context/LandingPageContext";
 import { db } from "../firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, query } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import "../css/AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, refreshUserData } = useAuth();
   const { faqContent, homeContent, updateFaqContent, updateHomeContent } = useLandingPage();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
+  const [userSubscriptions, setUserSubscriptions] = useState({});
   const [loading, setLoading] = useState(false);
 
   // Landing page editing states
@@ -132,6 +133,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const loadUserSubscriptions = async () => {
+    try {
+      const subscriptionsQuery = query(collection(db, "subscription_attempts"));
+      const subscriptionsSnapshot = await getDocs(subscriptionsQuery);
+      
+      const subscriptionsMap = {};
+      subscriptionsSnapshot.docs.forEach(doc => {
+        const subscription = doc.data();
+        const userId = subscription.userId;
+        
+        if (!subscriptionsMap[userId]) {
+          subscriptionsMap[userId] = [];
+        }
+        subscriptionsMap[userId].push(subscription);
+      });
+      
+      // For each user, get their most recent subscription
+      const latestSubscriptions = {};
+      Object.keys(subscriptionsMap).forEach(userId => {
+        const userSubs = subscriptionsMap[userId];
+        // Sort by timestamp to get the most recent
+        userSubs.sort((a, b) => {
+          if (a.timestamp && b.timestamp) {
+            return b.timestamp.toDate() - a.timestamp.toDate();
+          }
+          return 0;
+        });
+        latestSubscriptions[userId] = userSubs[0];
+      });
+      
+      setUserSubscriptions(latestSubscriptions);
+    } catch (error) {
+      console.error("Error loading user subscriptions:", error);
+    }
+  };
+
   const loadUsers = async () => {
     setLoading(true);
     try {
@@ -142,6 +179,9 @@ export default function AdminDashboard() {
         ...doc.data()
       }));
       setUsers(usersList);
+      
+      // Also load subscription data
+      await loadUserSubscriptions();
     } catch (error) {
       console.error("Error loading users:", error);
     } finally {
@@ -168,6 +208,11 @@ export default function AdminDashboard() {
         updatedAt: serverTimestamp()
       });
       loadUsers(); // Reload users
+      
+      // If the updated user is the current user, refresh their data
+      if (currentUser && currentUser.uid === userId) {
+        await refreshUserData();
+      }
     } catch (error) {
       console.error("Error updating user premium status:", error);
     }
@@ -374,32 +419,46 @@ export default function AdminDashboard() {
                       <th>Email</th>
                       <th>User Type</th>
                       <th>Status</th>
+                      <th>Subscribed Plan</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map(user => (
-                      <tr key={user.id}>
-                        <td>{user.firstName} {user.lastName}</td>
-                        <td>{user.email}</td>
-                        <td>{user.userType || "Free"}</td>
-                        <td>{user.status ? "Active" : "Suspended"}</td>
-                        <td>
-                          <button 
-                            onClick={() => updateUserPremium(user.id, user.userType !== "Premium")}
-                            className={user.userType === "Premium" ? "remove-premium" : "add-premium"}
-                          >
-                            {user.userType === "Premium" ? "Remove Premium" : "Add Premium"}
-                          </button>
-                          <button 
-                            onClick={() => updateUserStatus(user.id, !user.status)}
-                            className={user.status ? "suspend" : "activate"}
-                          >
-                            {user.status ? "Suspend" : "Activate"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {users.map(user => {
+                      const userSubscription = userSubscriptions[user.id];
+                      return (
+                        <tr key={user.id}>
+                          <td>{user.firstName} {user.lastName}</td>
+                          <td>{user.email}</td>
+                          <td>{user.userType || "Free"}</td>
+                          <td>{user.status ? "Active" : "Suspended"}</td>
+                          <td>
+                            {userSubscription ? (
+                              <div className="subscription-info">
+                                <span className="plan-name">{userSubscription.planTitle}</span>
+                                <span className="plan-price">({userSubscription.planPrice})</span>
+                              </div>
+                            ) : (
+                              <span className="no-subscription">None</span>
+                            )}
+                          </td>
+                          <td>
+                            <button 
+                              onClick={() => updateUserPremium(user.id, user.userType !== "Premium")}
+                              className={user.userType === "Premium" ? "remove-premium" : "add-premium"}
+                            >
+                              {user.userType === "Premium" ? "Remove Premium" : "Add Premium"}
+                            </button>
+                            <button 
+                              onClick={() => updateUserStatus(user.id, !user.status)}
+                              className={user.status ? "suspend" : "activate"}
+                            >
+                              {user.status ? "Suspend" : "Activate"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

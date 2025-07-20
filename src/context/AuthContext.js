@@ -44,7 +44,8 @@ export function AuthProvider({ children }) {
                   isVerified: user.emailVerified,
                   firstName: docSnap.data()?.firstName,
                   lastName: docSnap.data()?.lastName,
-                  role: docSnap.data()?.role
+                  role: docSnap.data()?.role,
+                  userType: docSnap.data()?.userType || "Free"
                 };
                 userDataRef.current = userData;
                 setCurrentUser(userData);
@@ -123,7 +124,8 @@ export function AuthProvider({ children }) {
         isVerified: userCredential.user.emailVerified,
         firstName: userData?.firstName,
         lastName: userData?.lastName,
-        role: userData?.role || "user"
+        role: userData?.role || "user",
+        userType: userData?.userType || "Free"
       };
       userDataRef.current = userDataWithRole;
       setCurrentUser(userDataWithRole);
@@ -157,6 +159,30 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Refresh current user data from Firestore
+  async function refreshUserData() {
+    if (!currentUser) return;
+    
+    try {
+      const userDocRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      
+      const updatedUserData = {
+        ...currentUser,
+        firstName: userData?.firstName,
+        lastName: userData?.lastName,
+        role: userData?.role || "user",
+        userType: userData?.userType || "Free"
+      };
+      
+      userDataRef.current = updatedUserData;
+      setCurrentUser(updatedUserData);
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
+    }
+  }
+
   const value = {
     currentUser,
     loading,
@@ -164,6 +190,7 @@ export function AuthProvider({ children }) {
     register,
     login,
     logout,
+    refreshUserData,
     reloadUser: () => auth.currentUser?.reload()
   };
 

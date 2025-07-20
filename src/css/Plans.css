@@ -87,3 +87,85 @@
 .premium-plan-button:hover {
   background-color: #3d8b40;
 }
+
+/* User Status Indicators */
+.user-status-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.status-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-label {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+  text-align: center;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator.premium {
+  background-color: #ffd700;
+  color: #333;
+}
+
+.status-indicator.free {
+  background-color: #e0e0e0;
+  color: #666;
+}
+
+.status-indicator.last-subscription {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-indicator.no-subscription {
+  background-color: #f5f5f5;
+  color: #999;
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.status-text {
+  white-space: nowrap;
+}
+
+/* Last Attempted Plan Styling */
+.plan-card.last-attempted {
+  border: 2px solid #4CAF50;
+  position: relative;
+}
+
+.last-attempted-badge {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

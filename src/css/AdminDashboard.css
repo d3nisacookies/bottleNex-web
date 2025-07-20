@@ -211,6 +211,30 @@
   background: #138496;
 }
 
+/* Subscription Plan Column Styles */
+.subscription-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plan-name {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+.plan-price {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.no-subscription {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 /* View Feedback */
 .view-feedback h2 {
   color: #333;
