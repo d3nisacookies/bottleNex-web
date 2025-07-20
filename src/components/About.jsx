@@ -1,7 +1,13 @@
 import "../css/About.css"
 
 export default function About(){
-    const names = ['Ming Han', 'Varsha', 'Aung Kaung', 'Brannon', 'Prabu'];
+    const teamMembers = [
+      { name: 'Ming Han', email: 'mhchua007@mymail.sim.edu.sg' },
+      { name: 'Varsha', email: 'ramakris005@mymail.sim.edu.sg' },
+      { name: 'Aung Kaung', email: 'ungk001@mymail.sim.edu.sg' },
+      { name: 'Brannon', email: 'bmhchua002@mymail.sim.edu.sg' },
+      { name: 'Prabhu', email: 'mariappa001@mymail.sim.edu.sg' }
+    ];
   
     return (
       <div className="about-container">
@@ -16,9 +22,12 @@ export default function About(){
         <h2 className="about-subtitle">Our Team</h2>
   
         <div className="team-container">
-          {names.map((name, index) => (
+          {teamMembers.map((member, index) => (
             <div key={index} className="team-member">
-              {name}
+              <div className="member-info">
+                <div className="member-name">{member.name}</div>
+                <div className="member-email">{member.email}</div>
+              </div>
             </div>
           ))}
         </div>

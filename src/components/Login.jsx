@@ -26,20 +26,17 @@ function Login() {
       // Attempt login
       const loginResult = await login(formData.email, formData.password);
       
-      // Check if user is admin and redirect accordingly
-      const isAdmin = loginResult.userData?.role === "admin";
+      // Debug logging
+      console.log('🔍 Login result:', loginResult);
+      console.log('🔍 User data:', loginResult.userData);
+      console.log('🔍 User role:', loginResult.userData?.role);
       
       // Success case
       console.log('✅ Login successful for user:', formData.email);
       console.log('👤 User role:', loginResult.userData?.role);
       
-      if (isAdmin) {
-        console.log('🔄 Redirecting admin to /admin');
-        navigate('/admin');
-      } else {
-        console.log('🔄 Redirecting user to:', location.state?.from || '/');
-        navigate(location.state?.from || '/');
-      }
+      // Let the App component handle redirects based on user role
+      console.log('🔄 Login complete, App component will handle redirect');
       
     } catch (err) {
       console.error('❌ Login error:', err);

@@ -91,7 +91,7 @@
 }
 
 /* Logout button */
-.logout-btn {
+.navbar .logout-btn {
   background: none;
   border: none;
   color: #333;
@@ -99,9 +99,11 @@
   font: inherit;
   font-weight: 500;
   padding: 0.5rem 0;
+  display: inline-block;
+  margin-left: 1rem;
 }
 
-.logout-btn:hover {
+.navbar .logout-btn:hover {
   color: #f44336;
 }
 

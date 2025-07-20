@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -24,6 +24,7 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userDataRef = useRef(null);
 
   // Auth state observer
   useEffect(() => {
@@ -33,19 +34,25 @@ export function AuthProvider({ children }) {
         auth,
         (user) => {
           if (user) {
-            // Get additional user data from Firestore
-            const userDocRef = doc(db, "users", user.uid);
-            getDoc(userDocRef).then((docSnap) => {
-              setCurrentUser({
-                ...user,
-                isVerified: user.emailVerified,
-                firstName: docSnap.data()?.firstName,
-                lastName: docSnap.data()?.lastName,
-                role: docSnap.data()?.role
+            // Only fetch user data if we don't already have it or if the user ID changed
+            if (!userDataRef.current || userDataRef.current.uid !== user.uid) {
+              // Get additional user data from Firestore
+              const userDocRef = doc(db, "users", user.uid);
+              getDoc(userDocRef).then((docSnap) => {
+                const userData = {
+                  ...user,
+                  isVerified: user.emailVerified,
+                  firstName: docSnap.data()?.firstName,
+                  lastName: docSnap.data()?.lastName,
+                  role: docSnap.data()?.role
+                };
+                userDataRef.current = userData;
+                setCurrentUser(userData);
               });
-            });
+            }
           } else {
             setCurrentUser(null);
+            userDataRef.current = null;
           }
           setLoading(false);
           setError(null);
@@ -109,6 +116,17 @@ export function AuthProvider({ children }) {
       await setDoc(doc(db, "users", userCredential.user.uid), {
         lastLogin: serverTimestamp()
       }, { merge: true });
+      
+      // Update currentUser state immediately with the new data
+      const userDataWithRole = {
+        ...userCredential.user,
+        isVerified: userCredential.user.emailVerified,
+        firstName: userData?.firstName,
+        lastName: userData?.lastName,
+        role: userData?.role || "user"
+      };
+      userDataRef.current = userDataWithRole;
+      setCurrentUser(userDataWithRole);
       
       // Return user data including role
       return {
