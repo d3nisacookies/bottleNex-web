@@ -15,6 +15,7 @@ export function useLandingPage() {
 export function LandingPageProvider({ children }) {
   const [faqContent, setFaqContent] = useState([]);
   const [homeContent, setHomeContent] = useState({});
+  const [reviewsContent, setReviewsContent] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Load landing page content from Firebase
@@ -83,6 +84,42 @@ export function LandingPageProvider({ children }) {
         await setDoc(doc(db, "landingPage", "home"), defaultHome);
         setHomeContent(defaultHome);
       }
+
+      // Load Reviews content
+      const reviewsDoc = await getDoc(doc(db, "landingPage", "reviews"));
+      if (reviewsDoc.exists()) {
+        setReviewsContent(reviewsDoc.data().items || []);
+      } else {
+        // Create default Reviews content
+        const defaultReviews = [
+          {
+            category: "Traffic Bottleneck Identification",
+            body: "BottleneX helped me spot traffic jams before I got stuck.",
+            reviewer: "Evan Rachel",
+            date: "June 10, 2025",
+            rating: 3
+          },
+          {
+            category: "Route Optimization",
+            body: "The app always finds the fastest route for my commute.",
+            reviewer: "Louis Hoffman",
+            date: "June 11, 2025",
+            rating: 4
+          },
+          {
+            category: "Real-Time Traffic Updates",
+            body: "Live updates are accurate and timely.",
+            reviewer: "Thoma Middleditch",
+            date: "June 12, 2025",
+            rating: 4
+          }
+        ];
+        await setDoc(doc(db, "landingPage", "reviews"), {
+          items: defaultReviews,
+          updatedAt: serverTimestamp()
+        });
+        setReviewsContent(defaultReviews);
+      }
     } catch (error) {
       console.error("Error loading landing page content:", error);
     } finally {
@@ -127,6 +164,7 @@ export function LandingPageProvider({ children }) {
   const value = {
     faqContent,
     homeContent,
+    reviewsContent,
     loading,
     updateFaqContent,
     updateHomeContent,

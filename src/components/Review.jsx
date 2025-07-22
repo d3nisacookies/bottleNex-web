@@ -1,5 +1,6 @@
 import React from "react";
 import "../css/Review.css";
+import { useLandingPage } from "../context/LandingPageContext";
 // import logo from "./bottlenex-logo.png"; // Place your logo in the project and update the path
 // import reviewerImg from "./reviewer1.jpg"; // Use the same image for demo or different ones
 
@@ -31,28 +32,29 @@ const reviews = [
 ];
 
 export default function Review() {
+  const { reviewsContent, loading } = useLandingPage();
+
+  if (loading) {
+    return <div className="review-container"><h1>Rating and Reviews</h1><p>Loading reviews...</p></div>;
+  }
+
+  // Filter for 4+ stars, sort by date (newest first), and take top 3
+  const topReviews = (reviewsContent || [])
+    .filter(r => r.rating >= 4)
+    .sort((a, b) => {
+      // Parse date strings to Date objects for comparison
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB - dateA;
+    })
+    .slice(0, 3);
+
   return (
-    // <div className="main-bg">
-    //   <nav className="navbar">
-    //     <div className="nav-links">
-    //       <a href="#">Home</a>
-    //       <a href="#">Subscription Plan</a>
-    //       <a href="#">Review</a>
-    //     </div>
-    //     {/* <div className="nav-logo">
-    //       <img src={logo} alt="BottleneX Logo" />
-    //     </div> */}
-    //     <div className="nav-links nav-links-right">
-    //       <a href="#">FAQ</a>
-    //       <a href="#">About Us</a>
-    //       <button className="download-btn">Download</button>
-    //       <button className="login-btn">Login</button>
-    //     </div>
-    //   </nav>
-      <div className="review-container">
-        <h1>Rating and Reviews</h1>
-        <div className="review-grid">
-          {reviews.map((r, i) => (
+    <div className="review-container">
+      <h1>Rating and Reviews</h1>
+      <div className="review-grid">
+        {topReviews.length > 0 ? (
+          topReviews.map((r, i) => (
             <div className="review-card" key={i}>
               <div className="rating">
                 {[...Array(5)].map((_, idx) => (
@@ -64,16 +66,18 @@ export default function Review() {
               <div className="review-category">{r.category}</div>
               <div className="review-body">{r.body}</div>
               <div className="reviewer-info">
-                <img src={r.img} alt={r.reviewer} />
+                {/* <img src={r.img} alt={r.reviewer} /> */}
                 <div>
                   <div className="reviewer-name">{r.reviewer}</div>
                   <div className="review-date">{r.date}</div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          ))
+        ) : (
+          <p>No top reviews available.</p>
+        )}
       </div>
-    // </div>
+    </div>
   );
 }
