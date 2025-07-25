@@ -38,9 +38,9 @@ export default function Review() {
     return <div className="review-container"><h1>Rating and Reviews</h1><p>Loading reviews...</p></div>;
   }
 
-  // Filter for 4+ stars, sort by date (newest first), and take top 3
+  // Filter for 4+ stars, not flagged, sort by date (newest first), and take top 3
   const topReviews = (reviewsContent || [])
-    .filter(r => r.rating >= 4)
+    .filter(r => r.rating >= 4 && !r.flagged)
     .sort((a, b) => {
       // Parse date strings to Date objects for comparison
       const dateA = new Date(a.date);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLandingPage } from "../context/LandingPageContext";
 import { db } from "../firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, query } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, query, getDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import "../css/AdminDashboard.css";
@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   // Load users and feedback data
   useEffect(() => {
     loadUsers();
-    loadFeedback();
+    loadReviews(); // Changed from loadFeedback to loadReviews
   }, []);
 
   // Initialize forms when content loads
@@ -102,32 +102,27 @@ export default function AdminDashboard() {
         });
       }
       console.log("Dummy feedback created successfully");
-      loadFeedback(); // Reload feedback
+      loadReviews(); // Reload feedback
     } catch (error) {
       console.error("Error creating dummy feedback:", error);
     }
   };
 
-  const loadFeedback = async () => {
-    console.log("Loading feedback...");
+  // Replace loadFeedback with loadReviews
+  const loadReviews = async () => {
     setLoading(true);
     try {
-      const feedbackCollection = collection(db, "feedback");
-      const feedbackSnapshot = await getDocs(feedbackCollection);
-      const feedbackList = feedbackSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      console.log("Loaded feedback:", feedbackList);
-      setFeedback(feedbackList);
-      
-      // If no feedback exists, create dummy data
-      if (feedbackList.length === 0) {
-        console.log("No feedback found, creating dummy data...");
-        await createDummyFeedback();
+      const reviewsDocRef = doc(db, 'landingPage', 'reviews');
+      const reviewsDocSnap = await getDoc(reviewsDocRef);
+      if (reviewsDocSnap.exists()) {
+        const data = reviewsDocSnap.data();
+        setFeedback(data.items || []);
+      } else {
+        setFeedback([]);
       }
     } catch (error) {
-      console.error("Error loading feedback:", error);
+      console.error('Error loading reviews:', error);
+      setFeedback([]);
     } finally {
       setLoading(false);
     }
@@ -220,13 +215,26 @@ export default function AdminDashboard() {
 
   const flagFeedback = async (feedbackId, flagged) => {
     try {
-      await updateDoc(doc(db, "feedback", feedbackId), {
-        flagged: flagged,
-        flaggedAt: serverTimestamp()
-      });
-      loadFeedback(); // Reload feedback
+      // Fetch the current reviews document
+      const reviewsDocRef = doc(db, 'landingPage', 'reviews');
+      const reviewsDocSnap = await getDoc(reviewsDocRef);
+      if (reviewsDocSnap.exists()) {
+        const data = reviewsDocSnap.data();
+        // Find the review by id or by unique combination (date + reviewer)
+        const updatedItems = (data.items || []).map(item => {
+          // Use id if present, otherwise fallback to date+reviewer as key
+          const key = item.id || (item.date + item.reviewer);
+          if (key === feedbackId) {
+            return { ...item, flagged: flagged };
+          }
+          return item;
+        });
+        // Update the reviews document
+        await updateDoc(reviewsDocRef, { items: updatedItems });
+        loadReviews(); // Reload reviews
+      }
     } catch (error) {
-      console.error("Error flagging feedback:", error);
+      console.error('Error flagging review:', error);
     }
   };
 
@@ -479,13 +487,12 @@ export default function AdminDashboard() {
                   <p>Feedback count: {feedback.length}</p>
                   <p>Feedback data: {JSON.stringify(feedback, null, 2)}</p>
                 </div>
-                
                 <div className="feedback-list">
                   {feedback.map(item => (
-                    <div key={item.id} className={`feedback-item ${item.flagged ? 'flagged' : ''}`}>
+                    <div key={item.id || item.date + item.reviewer} className={`feedback-item ${item.flagged ? 'flagged' : ''}`}>
                       <div className="feedback-header">
                         <h4>{item.reviewer || "Anonymous User"}</h4>
-                        <span className="date">{item.date || new Date(item.timestamp).toLocaleDateString()}</span>
+                        <span className="date">{item.date || ""}</span>
                         <div className="rating">
                           {[...Array(5)].map((_, idx) => (
                             <span key={idx} className="star">
@@ -498,7 +505,7 @@ export default function AdminDashboard() {
                       <p className="feedback-body">{item.body || item.text || "No feedback content available"}</p>
                       <div className="feedback-actions">
                         <button 
-                          onClick={() => flagFeedback(item.id, !item.flagged)}
+                          onClick={() => flagFeedback(item.id || item.date + item.reviewer, !item.flagged)}
                           className={item.flagged ? "unflag" : "flag"}
                         >
                           {item.flagged ? "Unflag" : "Flag"}
