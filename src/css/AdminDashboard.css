@@ -7,7 +7,7 @@
 }
 
 .admin-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
   padding: 30px;
   border-radius: 10px;
@@ -26,7 +26,8 @@
 .admin-header p {
   margin: 10px 0 0 0;
   font-size: 1.1rem;
-  opacity: 0.9;
+  color: white;
+  opacity: 1;
 }
 
 .logout-btn {
@@ -101,7 +102,7 @@
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
   padding: 25px;
   border-radius: 10px;

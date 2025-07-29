@@ -116,13 +116,22 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <Link 
-                to="/register" 
-                className="nav-links register-btn"
-                onClick={() => handleTestNavigation('Register')}
-              >
-                Register and download
-              </Link>
+              <>
+                <Link 
+                  to="/register" 
+                  className="nav-links register-btn"
+                  onClick={() => handleTestNavigation('Register')}
+                >
+                  Register and Download
+                </Link>
+                <Link 
+                  to="/login" 
+                  className="nav-links login-btn"
+                  onClick={() => handleTestNavigation('Login')}
+                >
+                  Login
+                </Link>
+              </>
             )}
           </li>
         </ul>

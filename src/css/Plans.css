@@ -16,6 +16,8 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .plan-card {
@@ -27,10 +29,37 @@
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.plan-card.popular-plan {
+  border: 2px solid #4CAF50;
+  transform: scale(1.05);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .plan-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.plan-card.popular-plan:hover {
+  transform: translateY(-5px) scale(1.05);
 }
 
 .plan-title {
@@ -79,6 +108,13 @@
   color: white;
 }
 
+.subscribed-plan-button {
+  background-color: #2196F3;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
 .subscribe-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -86,6 +122,12 @@
 
 .premium-plan-button:hover {
   background-color: #3d8b40;
+}
+
+.subscribed-plan-button:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: #2196F3;
 }
 
 /* User Status Indicators */
@@ -168,4 +210,34 @@
   font-size: 12px;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .plans-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .plan-card {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .user-status-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .subscription-container {
+    padding: 20px;
+  }
+  
+  .subscription-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
 }

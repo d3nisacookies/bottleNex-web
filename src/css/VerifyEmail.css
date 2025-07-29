@@ -1,0 +1,130 @@
+.verify-email-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.verify-email-container {
+  padding-top: 120px; /* Account for fixed navbar */
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 20px 20px;
+}
+
+.verify-email-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.verify-email-icon {
+  margin-bottom: 20px;
+}
+
+.verify-email-card h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.verify-message {
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.email-display {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.verification-steps {
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.verification-steps h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.verification-steps ol {
+  color: #666;
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+.verification-steps li {
+  margin-bottom: 8px;
+}
+
+.verification-steps a {
+  color: #4CAF50;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.verification-steps a:hover {
+  text-decoration: underline;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.resend-btn {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.resend-btn:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.resend-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.login-btn {
+  background: #2196F3;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #1976D2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .verify-email-card {
+    padding: 30px 20px;
+  }
+  
+  .verify-email-container {
+    padding: 100px 15px 15px;
+  }
+} 

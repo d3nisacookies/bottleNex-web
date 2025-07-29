@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLandingPage } from "../context/LandingPageContext";
 import { db } from "../firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, query, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, query, getDoc, orderBy } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import "../css/AdminDashboard.css";
@@ -15,6 +15,9 @@ export default function AdminDashboard() {
   const [feedback, setFeedback] = useState([]);
   const [userSubscriptions, setUserSubscriptions] = useState({});
   const [loading, setLoading] = useState(false);
+  const [subscriptionPlans, setSubscriptionPlans] = useState([]);
+  const [editingPlans, setEditingPlans] = useState(false);
+  const [plansForm, setPlansForm] = useState([]);
 
   // Landing page editing states
   const [editingFaq, setEditingFaq] = useState(false);
@@ -32,7 +35,24 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadUsers();
     loadReviews(); // Changed from loadFeedback to loadReviews
+    loadSubscriptionPlans();
   }, []);
+
+  // Load subscription plans from Firebase
+  const loadSubscriptionPlans = async () => {
+    try {
+      const plansQuery = query(collection(db, "landingPage", "subscription_plans", "plans"), orderBy("order"));
+      const querySnapshot = await getDocs(plansQuery);
+      const plansData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setSubscriptionPlans(plansData);
+      setPlansForm(plansData);
+    } catch (error) {
+      console.error("Error loading subscription plans:", error);
+    }
+  };
 
   // Initialize forms when content loads
   useEffect(() => {
@@ -347,6 +367,65 @@ export default function AdminDashboard() {
     setHomeForm({ ...homeForm, features: updatedFeatures });
   };
 
+  // Subscription Plans editing functions
+  const handlePlansEdit = () => {
+    setEditingPlans(true);
+    setPlansForm([...subscriptionPlans]);
+  };
+
+  const handlePlansSave = async () => {
+    try {
+      // Update each plan in Firebase
+      for (const plan of plansForm) {
+        await updateDoc(doc(db, "landingPage", "subscription_plans", "plans", plan.id), {
+          title: plan.title,
+          price: plan.price,
+          billing: plan.billing,
+          features: plan.features,
+          order: plan.order,
+          active: plan.active,
+          updatedAt: serverTimestamp()
+        });
+      }
+      
+      await loadSubscriptionPlans(); // Reload plans
+      setEditingPlans(false);
+      alert("Subscription plans updated successfully!");
+    } catch (error) {
+      console.error("Error updating subscription plans:", error);
+      alert("Failed to update subscription plans");
+    }
+  };
+
+  const handlePlansCancel = () => {
+    setEditingPlans(false);
+    setPlansForm([...subscriptionPlans]);
+  };
+
+  const updatePlanField = (index, field, value) => {
+    const updatedPlans = [...plansForm];
+    updatedPlans[index] = { ...updatedPlans[index], [field]: value };
+    setPlansForm(updatedPlans);
+  };
+
+  const updatePlanFeature = (planIndex, featureIndex, value) => {
+    const updatedPlans = [...plansForm];
+    updatedPlans[planIndex].features[featureIndex] = value;
+    setPlansForm(updatedPlans);
+  };
+
+  const addPlanFeature = (planIndex) => {
+    const updatedPlans = [...plansForm];
+    updatedPlans[planIndex].features.push("");
+    setPlansForm(updatedPlans);
+  };
+
+  const removePlanFeature = (planIndex, featureIndex) => {
+    const updatedPlans = [...plansForm];
+    updatedPlans[planIndex].features.splice(featureIndex, 1);
+    setPlansForm(updatedPlans);
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="admin-header">
@@ -379,6 +458,12 @@ export default function AdminDashboard() {
           onClick={() => setActiveSection("landing")}
         >
           Edit Landing Page
+        </button>
+        <button 
+          className={activeSection === "subscription-plans" ? "active" : ""}
+          onClick={() => setActiveSection("subscription-plans")}
+        >
+          Edit Subscription Plans
         </button>
         <button 
           className={activeSection === "create-admin" ? "active" : ""}
@@ -480,40 +565,32 @@ export default function AdminDashboard() {
             {loading ? (
               <p>Loading feedback...</p>
             ) : (
-              <div>
-                {/* Debug section */}
-                <div style={{ background: '#f8f9fa', padding: '15px', marginBottom: '20px', borderRadius: '6px' }}>
-                  <h4>Debug Info:</h4>
-                  <p>Feedback count: {feedback.length}</p>
-                  <p>Feedback data: {JSON.stringify(feedback, null, 2)}</p>
-                </div>
-                <div className="feedback-list">
-                  {feedback.map(item => (
-                    <div key={item.id || item.date + item.reviewer} className={`feedback-item ${item.flagged ? 'flagged' : ''}`}>
-                      <div className="feedback-header">
-                        <h4>{item.reviewer || "Anonymous User"}</h4>
-                        <span className="date">{item.date || ""}</span>
-                        <div className="rating">
-                          {[...Array(5)].map((_, idx) => (
-                            <span key={idx} className="star">
-                              {idx < (item.rating || 3) ? "★" : "☆"}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <p className="feedback-category">{item.category || "General Feedback"}</p>
-                      <p className="feedback-body">{item.body || item.text || "No feedback content available"}</p>
-                      <div className="feedback-actions">
-                        <button 
-                          onClick={() => flagFeedback(item.id || item.date + item.reviewer, !item.flagged)}
-                          className={item.flagged ? "unflag" : "flag"}
-                        >
-                          {item.flagged ? "Unflag" : "Flag"}
-                        </button>
+              <div className="feedback-list">
+                {feedback.map(item => (
+                  <div key={item.id || item.date + item.reviewer} className={`feedback-item ${item.flagged ? 'flagged' : ''}`}>
+                    <div className="feedback-header">
+                      <h4>{item.reviewer || "Anonymous User"}</h4>
+                      <span className="date">{item.date || ""}</span>
+                      <div className="rating">
+                        {[...Array(5)].map((_, idx) => (
+                          <span key={idx} className="star">
+                            {idx < (item.rating || 3) ? "★" : "☆"}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <p className="feedback-category">{item.category || "General Feedback"}</p>
+                    <p className="feedback-body">{item.body || item.text || "No feedback content available"}</p>
+                    <div className="feedback-actions">
+                      <button 
+                        onClick={() => flagFeedback(item.id || item.date + item.reviewer, !item.flagged)}
+                        className={item.flagged ? "unflag" : "flag"}
+                      >
+                        {item.flagged ? "Unflag" : "Flag"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -658,11 +735,136 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Subscription Plans Editing Section */}
+        {activeSection === "subscription-plans" && (
+          <div className="edit-subscription-plans">
+            <h2>Edit Subscription Plans</h2>
+            {loading ? (
+              <p>Loading subscription plans...</p>
+            ) : (
+              <div>
+                {!editingPlans ? (
+                  <div>
+                    <button onClick={handlePlansEdit} className="edit-btn">Edit Subscription Plans</button>
+                    <div className="plans-preview">
+                      {subscriptionPlans.map((plan) => (
+                        <div key={plan.id} className="plan-preview-card">
+                          <h4>{plan.title}</h4>
+                          <p><strong>Price:</strong> {plan.price} {plan.billing}</p>
+                          <p><strong>Status:</strong> {plan.active ? "Active" : "Inactive"}</p>
+                          <p><strong>Order:</strong> {plan.order}</p>
+                          <div className="features-preview">
+                            <strong>Features:</strong>
+                            <ul>
+                              {plan.features.map((feature, index) => (
+                                <li key={index}>{feature}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="edit-form">
+                    {plansForm.map((plan, planIndex) => (
+                      <div key={plan.id} className="plan-edit-card">
+                        <h4>Plan #{plan.order}: {plan.title}</h4>
+                        
+                        <div className="form-row">
+                          <label>Title:</label>
+                          <input
+                            type="text"
+                            value={plan.title}
+                            onChange={(e) => updatePlanField(planIndex, 'title', e.target.value)}
+                            placeholder="Plan title"
+                          />
+                        </div>
+                        
+                        <div className="form-row">
+                          <label>Price:</label>
+                          <input
+                            type="text"
+                            value={plan.price}
+                            onChange={(e) => updatePlanField(planIndex, 'price', e.target.value)}
+                            placeholder="e.g., $5"
+                          />
+                        </div>
+                        
+                        <div className="form-row">
+                          <label>Billing:</label>
+                          <input
+                            type="text"
+                            value={plan.billing}
+                            onChange={(e) => updatePlanField(planIndex, 'billing', e.target.value)}
+                            placeholder="e.g., per month"
+                          />
+                        </div>
+                        
+                        <div className="form-row">
+                          <label>Order:</label>
+                          <input
+                            type="number"
+                            value={plan.order}
+                            onChange={(e) => updatePlanField(planIndex, 'order', parseInt(e.target.value))}
+                            min="1"
+                          />
+                        </div>
+                        
+                        <div className="form-row">
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={plan.active}
+                              onChange={(e) => updatePlanField(planIndex, 'active', e.target.checked)}
+                            />
+                            Active
+                          </label>
+                        </div>
+                        
+                        <div className="form-item">
+                          <label>Features:</label>
+                          {plan.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="feature-edit">
+                              <div className="form-row">
+                                <input
+                                  type="text"
+                                  value={feature}
+                                  onChange={(e) => updatePlanFeature(planIndex, featureIndex, e.target.value)}
+                                  placeholder="Enter feature"
+                                />
+                                <button 
+                                  onClick={() => removePlanFeature(planIndex, featureIndex)}
+                                  className="remove-btn"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                          <button onClick={() => addPlanFeature(planIndex)} className="add-btn">
+                            Add Feature
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    <div className="form-actions">
+                      <button onClick={handlePlansSave} className="save-btn">Save Subscription Plans</button>
+                      <button onClick={handlePlansCancel} className="cancel-btn">Cancel</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Temporary Admin Creation Section */}
         {activeSection === "create-admin" && (
           <div className="create-admin">
             <h2>Create Admin User</h2>
-            <p>Use this form to create a new admin user for testing purposes.</p>
+            <p>Use this form to create a new Admin User.</p>
             <form onSubmit={createAdminUser} className="admin-form">
               <div className="form-group">
                 <label>First Name:</label>

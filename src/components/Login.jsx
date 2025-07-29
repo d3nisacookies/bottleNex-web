@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 import '../css/Login.css';
 
 function Login() {
@@ -14,48 +18,73 @@ function Login() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const maxRetries = 3;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      setError('');
       setLoading(true);
+      setError('');
       
-      // Attempt login
-      const loginResult = await login(formData.email, formData.password);
+      // Handle login directly with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       
-      // Debug logging
-      console.log('🔍 Login result:', loginResult);
-      console.log('🔍 User data:', loginResult.userData);
-      console.log('🔍 User role:', loginResult.userData?.role);
+      console.log('✅ Firebase login successful');
+      console.log('📧 Email verification status:', userCredential.user.emailVerified);
+      console.log('🆔 User UID:', userCredential.user.uid);
       
-      // Success case
-      console.log('✅ Login successful for user:', formData.email);
-      console.log('👤 User role:', loginResult.userData?.role);
+      // Check if email is verified
+      if (!userCredential.user.emailVerified) {
+        await sendEmailVerification(userCredential.user);
+        await signOut(auth);
+        setError('Please verify your email address before logging in.');
+        navigate('/verify-email', {
+          state: {
+            email: formData.email,
+            message: 'Please verify your email address before logging in. A new verification email has been sent.'
+          }
+        });
+        return;
+      }
       
-      // Let the App component handle redirects based on user role
-      console.log('🔄 Login complete, App component will handle redirect');
+      console.log('🔍 Getting user data from Firestore...');
+      // Get user data from Firestore
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      
+      console.log('✅ User data retrieved from Firestore:', userData);
+      
+      // Update last login timestamp
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        lastLogin: serverTimestamp(),
+        status: true,
+        emailVerified: true
+      }, { merge: true });
+      
+      console.log('✅ Last login timestamp updated in Firestore.');
+      
+      // Success - user will be redirected by App component
       
     } catch (err) {
-      console.error('❌ Login error:', err);
+      let errorMessage = 'Login failed. Please try again.';
       
-      let errorMessage = 'Login failed';
       if (err.code === 'auth/wrong-password') {
-        errorMessage = 'Incorrect password';
-        const newRetryCount = retryCount + 1;
-        setRetryCount(newRetryCount);
-        
-        if (newRetryCount < maxRetries) {
-          console.log(`🔄 Retry attempt ${newRetryCount} of ${maxRetries}`);
-          errorMessage += ` (${maxRetries - newRetryCount} attempts remaining)`;
-        } else {
-          console.log('⛔ Maximum retry attempts reached');
-          errorMessage = 'Too many failed attempts. Please try again later.';
-        }
+        errorMessage = 'Email or Password is incorrect.';
+      } else if (err.code === 'auth/invalid-credential') {
+        errorMessage = 'Email or Password is incorrect.';
       } else if (err.code === 'auth/user-not-found') {
-        errorMessage = 'No account found with this email';
+        errorMessage = 'Email or Password is incorrect.';
+      } else if (err.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (err.code === 'auth/user-disabled') {
+        errorMessage = 'This account has been disabled. Please contact support.';
+      } else if (err.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed login attempts. Please try again later.';
+      } else if (err.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else {
+        errorMessage = `Login failed: ${err.message || 'Unknown error occurred'}`;
       }
       
       setError(errorMessage);
@@ -64,29 +93,16 @@ function Login() {
     }
   };
 
-  // Reset retry count when email changes
-  useEffect(() => {
-    setRetryCount(0);
-  }, [formData.email]);
-
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Login</h2>
-        
         {error && (
           <div className="error-message">
             {error}
-            {error.includes('Incorrect password') && retryCount < maxRetries && (
-              <button 
-                onClick={handleSubmit}
-                className="retry-button"
-              >
-                Try Again
-              </button>
-            )}
           </div>
         )}
+        
+        <h2>Login</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -112,7 +128,7 @@ function Login() {
           <button 
             type="submit" 
             className="login-button"
-            disabled={loading || retryCount >= maxRetries}
+            disabled={loading}
           >
             {loading ? (
               <>

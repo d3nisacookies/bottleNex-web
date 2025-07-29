@@ -32,8 +32,18 @@ export function AuthProvider({ children }) {
     try {
       unsubscribe = onAuthStateChanged(
         auth,
-        (user) => {
+        async (user) => {
           if (user) {
+            // Check if email is verified
+            if (!user.emailVerified) {
+              console.log('🔄 Unverified user detected, signing out...');
+              await signOut(auth);
+              setCurrentUser(null);
+              userDataRef.current = null;
+              setLoading(false);
+              return;
+            }
+            
             // Only fetch user data if we don't already have it or if the user ID changed
             if (!userDataRef.current || userDataRef.current.uid !== user.uid) {
               // Get additional user data from Firestore
@@ -108,14 +118,26 @@ export function AuthProvider({ children }) {
       setLoading(true);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
+      // Check if email is verified
+      if (!userCredential.user.emailVerified) {
+        // Send verification email again
+        await sendEmailVerification(userCredential.user);
+        
+        // Sign out the user if email is not verified
+        await signOut(auth);
+        throw new Error('Please verify your email address before logging in.');
+      }
+      
       // Get user data from Firestore to check role
       const userDocRef = doc(db, "users", userCredential.user.uid);
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.data();
       
-      // Update last login timestamp
+      // Update last login timestamp and set status to true (verified)
       await setDoc(doc(db, "users", userCredential.user.uid), {
-        lastLogin: serverTimestamp()
+        lastLogin: serverTimestamp(),
+        status: true,
+        emailVerified: true
       }, { merge: true });
       
       // Update currentUser state immediately with the new data
