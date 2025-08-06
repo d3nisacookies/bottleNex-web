@@ -77,7 +77,7 @@ const LandingPage = () => {
             { name: 'Varsha', email: 'ramakris005@mymail.sim.edu.sg' },
             { name: 'Aung Kaung', email: 'ungk001@mymail.sim.edu.sg' },
             { name: 'Brannon', email: 'bmhchua002@mymail.sim.edu.sg' },
-            { name: 'Prabhu', email: 'mariappa001@mymail.sim.edu.sg' }
+            { name: 'Prabu', email: 'mariappa001@mymail.sim.edu.sg' }
           ],
           stats: [
             { value: '1M+', label: 'Active Users' },
