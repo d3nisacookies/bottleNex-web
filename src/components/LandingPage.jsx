@@ -289,7 +289,7 @@ const LandingPage = () => {
             <iframe
               width="100%"
               height="100%"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src="https://www.youtube.com/embed/NjV4qS1i1DI"
               title="BottleNex Demo"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
