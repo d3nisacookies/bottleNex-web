@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Bottlenex from "../images/Bottlenex.png";
 import '../css/LandingPage.css';
 
 const SharedNavbar = () => {
@@ -37,7 +38,7 @@ const SharedNavbar = () => {
       <nav className="landing-navbar">
         <div className="nav-container">
           <div className="nav-logo">
-            <img src="/logo192.png" alt="BottleNex" className="logo-img" />
+            <img src={Bottlenex} alt="BottleNex" className="logo-img" />
             <span className="logo-text">BottleNex</span>
           </div>
           

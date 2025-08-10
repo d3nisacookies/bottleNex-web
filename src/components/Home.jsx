@@ -39,7 +39,7 @@ const Home = () => {
             <iframe
               width="100%"
               height="100%"
-              src="https://www.youtube.com/watch?v=NjV4qS1i1DI"
+              src="https://www.youtube.com/embed/NjV4qS1i1DI"
               title="BottleneX"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
