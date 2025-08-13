@@ -11,7 +11,40 @@ const SharedNavbar = () => {
   // Handle download
   const handleDownload = () => {
     console.log('Download initiated');
-    // Add your download logic here
+    console.log('Function is executing...');
+    
+    try {
+      console.log('Inside try block');
+      
+      // Simple approach: create and click link
+      const link = document.createElement('a');
+      console.log('Link element created');
+      
+      link.href = '/BottleneX.apk';
+      link.download = 'BottleneX.apk';
+      console.log('Link attributes set');
+      
+      // Add to body and click
+      document.body.appendChild(link);
+      console.log('Link added to body');
+      
+      link.click();
+      console.log('Link clicked');
+      
+      // Remove from body
+      document.body.removeChild(link);
+      console.log('Link removed from body');
+      
+      console.log('Download process completed');
+      
+    } catch (error) {
+      console.error('Error in download function:', error);
+      console.log('Trying alternative method...');
+      
+      // Alternative: direct navigation
+      window.location.assign('/BottleneX.apk');
+      console.log('Alternative method executed');
+    }
   };
 
   // Handle logout
