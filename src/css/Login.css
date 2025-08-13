@@ -201,3 +201,12 @@
 .login-links span {
   color: #a0aec0;
 }
+
+/* Forgot Password specific styles */
+.forgot-password-description {
+  text-align: center;
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}

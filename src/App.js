@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import Register from './components/Register.jsx';
 import Login from './components/Login.jsx';
 import VerifyEmail from './components/VerifyEmail.jsx';
+import ForgotPassword from './components/ForgotPassword.jsx';
 import "./App.css"
 import { AuthProvider } from './context/AuthContext.js';
 import { LandingPageProvider } from './context/LandingPageContext.js';
@@ -49,6 +50,7 @@ function AppContentWrapper() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {/* Admin route - only accessible to admin users */}
           <Route path="/admin" element={
             currentUser && currentUser.role === "admin" ? (
