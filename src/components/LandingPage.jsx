@@ -218,8 +218,8 @@ const LandingPage = () => {
       const link = document.createElement('a');
       console.log('Link element created');
       
-      link.href = '/BottleneX.apk';
-      link.download = 'BottleneX.apk';
+      link.href = '/BottleneXNavigation.apk';
+      link.download = 'BottleneXNavigation.apk';
       console.log('Link attributes set');
       
       // Add to body and click
@@ -240,7 +240,7 @@ const LandingPage = () => {
       console.log('Trying alternative method...');
       
       // Alternative: direct navigation
-      window.location.assign('/BottleneX.apk');
+      window.location.assign('/BottleneXNavigation.apk');
       console.log('Alternative method executed');
     }
   };

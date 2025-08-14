@@ -42,7 +42,7 @@ const SharedNavbar = () => {
       console.log('Trying alternative method...');
       
       // Alternative: direct navigation
-      window.location.assign('/BottleneX.apk');
+      window.location.assign('/BottleneXNavigation.apk');
       console.log('Alternative method executed');
     }
   };
