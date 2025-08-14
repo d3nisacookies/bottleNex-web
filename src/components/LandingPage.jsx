@@ -6,6 +6,7 @@ import { collection, getDocs, query, orderBy, where, doc, getDoc, addDoc, server
 import { db } from '../firebase';
 import PaymentModal from './PaymentModal.jsx';
 import Bottlenex from "../images/Bottlenex.png";
+import { openDownloadLink } from '../config/download';
 import '../css/LandingPage.css';
 
 const LandingPage = () => {
@@ -208,41 +209,11 @@ const LandingPage = () => {
 
   // Handle download
   const handleDownload = () => {
-    console.log('Download initiated');
-    console.log('Function is executing...');
+    console.log('Download initiated - opening Google Drive link');
     
-    try {
-      console.log('Inside try block');
-      
-      // Simple approach: create and click link
-      const link = document.createElement('a');
-      console.log('Link element created');
-      
-      link.href = '/BottleneXNavigation.apk';
-      link.download = 'BottleneXNavigation.apk';
-      console.log('Link attributes set');
-      
-      // Add to body and click
-      document.body.appendChild(link);
-      console.log('Link added to body');
-      
-      link.click();
-      console.log('Link clicked');
-      
-      // Remove from body
-      document.body.removeChild(link);
-      console.log('Link removed from body');
-      
-      console.log('Download process completed');
-      
-    } catch (error) {
-      console.error('Error in download function:', error);
-      console.log('Trying alternative method...');
-      
-      // Alternative: direct navigation
-      window.location.assign('/BottleneXNavigation.apk');
-      console.log('Alternative method executed');
-    }
+    openDownloadLink();
+    
+    console.log('Google Drive link opened');
   };
 
   // Handle logout

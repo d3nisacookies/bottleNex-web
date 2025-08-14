@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Bottlenex from "../images/Bottlenex.png";
+import { openDownloadLink } from '../config/download';
 import '../css/Navbar.css';
 
 const Navbar = () => {
@@ -12,8 +13,11 @@ const Navbar = () => {
   };
 
   const handleDownload = () => {
-    console.log('Download initiated');
-    // Add your download logic here, e.g., redirect to download link or trigger file download
+    console.log('Download initiated - opening Google Drive link');
+    
+    openDownloadLink();
+    
+    console.log('Google Drive link opened');
   };
 
   return (

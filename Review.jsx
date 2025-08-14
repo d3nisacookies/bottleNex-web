@@ -2,6 +2,7 @@ import React from "react";
 import "./Review.css";
 import logo from "./bottlenex-logo.png"; // Place your logo in the project and update the path
 import reviewerImg from "./reviewer1.jpg"; // Use the same image for demo or different ones
+import { openDownloadLink } from '../src/config/download';
 
 const reviews = [
   {
@@ -45,7 +46,7 @@ export default function Review() {
         <div className="nav-links nav-links-right">
           <a href="#">FAQ</a>
           <a href="#">About Us</a>
-          <button className="download-btn">Download</button>
+          <button className="download-btn" onClick={openDownloadLink}>Download</button>
           <button className="login-btn">Login</button>
         </div>
       </nav>
